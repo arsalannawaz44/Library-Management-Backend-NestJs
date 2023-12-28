@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import {Book} from "./schemas/book.schema";
@@ -16,12 +16,25 @@ export class BookService {
     ) {}
 
     async findAll(query: ExpressQuery): Promise<Book[]> {
+        const resultPage = 2;
+        const currentPage = Number(query.page) || 1;
+        const skip = resultPage * (currentPage-1);
 
         const keyword = query.keyword ? {
-            $regex: query.keyword,
-            $options: 'i'
+            title: {
+                $regex: query.keyword,
+                $options: 'i'
+            }
         } : {}
-        return await this.bookModel.find({...keyword});
+
+        const books = await this.bookModel
+            .find({...keyword})
+            .limit(resultPage)
+            .skip(skip);
+        if (!books){
+            throw new BadRequestException('This Page is not Found')
+        }
+        return books;
     }
 
     async create(book: Book): Promise<Book>{
@@ -29,6 +42,12 @@ export class BookService {
     }
 
     async findById(id: string): Promise<Book>{
+
+        const isValid = mongoose.isValidObjectId(id)
+
+        if (!isValid){
+            throw new BadRequestException('Please Enter Correct ID')
+        }
         const book = await this.bookModel.findById(id);
         if (!book){
             throw new NotFoundException('Book Not Found');
