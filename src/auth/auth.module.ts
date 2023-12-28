@@ -10,9 +10,9 @@ import {ConfigService} from "@nestjs/config";
 @Module({
     imports: [
         PassportModule.register({defaultStrategy: 'jwt'}),
-        MongooseModule.forFeature([{name: 'User', schema: UserSchema}], 'default'),
+        MongooseModule.forFeature([{name: User.name, schema: UserSchema}], 'default'),
         JwtModule.registerAsync({
-            inject: [ConfigService],
+      inject: [ConfigService],
             useFactory: (config: ConfigService) => {
                 return {
                     secret: config.get<string>('JWT_SECRET'),

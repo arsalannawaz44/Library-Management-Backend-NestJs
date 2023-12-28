@@ -6,7 +6,6 @@ import {ConfigModule} from "@nestjs/config";
 import {MongooseModule} from "@nestjs/mongoose";
 import { AuthModule } from './auth/auth.module';
 import * as process from "process";
-import {AuthService} from "./auth/auth.service";
 
 @Module({
   imports: [
@@ -14,11 +13,11 @@ import {AuthService} from "./auth/auth.service";
         envFilePath: '.env',
         isGlobal: true,
       }),
-      MongooseModule.forRoot(process.env.DB_URI),
+      MongooseModule.forRoot(process.env.DB_URI, {connectionName: 'default'}),
       BookModule,
-      AuthModule
+      AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService],
+  providers: [AppService],
 })
 export class AppModule {}

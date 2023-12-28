@@ -1,9 +1,9 @@
 import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import {Book} from "./schemas/book.schema";
+import {Book, BookDocument} from "./schemas/book.schema";
 import {NotFoundError} from "rxjs";
-import {Query, Schema, Types} from "mongoose";
+import {Model, Query, Schema, Types} from "mongoose";
 import {ObjectId} from "mongoose";
 
 import {Query as ExpressQuery} from 'express-serve-static-core'
@@ -11,8 +11,8 @@ import {Query as ExpressQuery} from 'express-serve-static-core'
 @Injectable()
 export class BookService {
     constructor(
-        @InjectModel(Book.name)
-        private bookModel: mongoose.Model<Book>,
+        @InjectModel(Book.name, "default") private readonly bookModel: Model<BookDocument>,
+
     ) {}
 
     async findAll(query: ExpressQuery): Promise<Book[]> {

@@ -1,6 +1,7 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
 import {Category} from "../../utilities/enums/category.enums";
-import {ObjectId} from "mongoose";
+import {Document, ObjectId} from "mongoose";
+export type BookDocument = Book & Document
 
 @Schema({
     timestamps: true,
